@@ -1,0 +1,118 @@
+buildscript {
+    ext {
+        springBootVersion = "1.4.0.RELEASE"
+        osPackageVersion = "3.4.0"
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("com.netflix.nebula:gradle-ospackage-plugin:${osPackageVersion}")
+    }
+}
+
+apply plugin: "nebula.ospackage"
+apply plugin: "java"
+apply plugin: "eclipse"
+apply plugin: "spring-boot"
+apply plugin: "nebula.ospackage"
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+version = "1.0.0"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+}
+
+jar {
+    baseName = "spring-boot"
+    manifest {
+        attributes("Implementation-Title": "SpringBoot", "Implementation-Version": "${project.version}")
+    }
+}
+
+eclipse {
+    classpath {
+        containers.remove("org.eclipse.jdt.launching.JRE_CONTAINER")
+        containers "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "2.5"
+}
+
+springBoot {
+    // Allows us to run the jar directly from the command line, e.g. ./springboot-0.0.1.jar
+    executable = true
+    // Excludes the devtools package from production builds
+    excludeDevtools = true
+}
+
+// OS Package plugin configuration
+ospackage {
+    packageName = "spring-boot"
+    version = "${project.version}"
+    release = 1
+    os = LINUX
+    type = BINARY
+   // arch = NOARCH
+
+    preInstall file("pkg_scripts/preInstall.sh")
+    postInstall file("pkg_scripts/postInstall.sh")
+//    preUninstall file("pkg_scripts/preUninstall.sh")
+    postUninstall file("pkg_scripts/postUninstall.sh")
+
+    into "/opt/local/spring-boot"
+    user "spring-boot"
+    permissionGroup "spring-boot"
+
+    // Copy the actual .jar file
+    from(jar.outputs.files) {
+        // Strip the version from the jar filename
+        rename { String fileName ->
+            fileName.replace("-${project.version}", "")
+        }
+        fileMode 0500
+        into "bin"
+    }
+
+    // Copy the config files
+    from("config/conf") {
+        fileType CONFIG | NOREPLACE
+        fileMode 0754
+        into "conf"
+    }
+}
+
+// Configure our RPM build task
+buildRpm {
+    user "spring-boot"
+    permissionGroup "spring-boot"
+
+    // Creates an empty log directory
+    directory("/opt/local/spring-boot/log", 0755)
+
+    // Creates a symlink to the jar file as an init.d script (this functionality is provided by Spring Boot)
+    link("/etc/init.d/spring-boot", "/opt/local/spring-boot/bin/spring-boot.jar")
+
+    // According to Spring Boot, the conf file needs to sit next to the jar, so we just create a symlink
+    link("/opt/local/spring-bot/bin/spring-boot.conf", "/opt/local/spring-boot/conf/spring-boot.conf")
+}
+
+// Same as the buildRpm task
+buildDeb {
+user "spring-boot"
+    permissionGroup "spring-boot"
+    directory("/opt/local/spring-boot/log", 0755)
+    link("/etc/init.d/spring-boot", "/opt/local/spring-boot/bin/spring-boot.jar")
+    link("/opt/local/spring-boot/bin/spring-boot.conf", "/opt/local/spring-boot/conf/spring-boot.conf")
+}
