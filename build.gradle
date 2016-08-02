@@ -17,7 +17,6 @@ apply plugin: "nebula.ospackage"
 apply plugin: "java"
 apply plugin: "eclipse"
 apply plugin: "spring-boot"
-apply plugin: "nebula.ospackage"
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -64,11 +63,11 @@ ospackage {
     release = 1
     os = LINUX
     type = BINARY
-   // arch = NOARCH
+
 
     preInstall file("pkg_scripts/preInstall.sh")
     postInstall file("pkg_scripts/postInstall.sh")
-//    preUninstall file("pkg_scripts/preUninstall.sh")
+//  preUninstall file("pkg_scripts/preUninstall.sh")
     postUninstall file("pkg_scripts/postUninstall.sh")
 
     into "/opt/local/spring-boot"
