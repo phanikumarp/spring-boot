@@ -3,4 +3,5 @@
 install  --mode=755 --directory /opt/local/spring-boot/log
 
 # start services
-service spring-boot start
+#service spring-boot start
+start spring-boot 
