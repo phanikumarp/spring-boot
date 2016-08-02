@@ -1,3 +1,3 @@
 #!/bin/bash
 
-service spring-boot stop
+#service spring-boot stop

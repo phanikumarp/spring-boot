@@ -64,10 +64,9 @@ ospackage {
     os = LINUX
     type = BINARY
 
-
     preInstall file("pkg_scripts/preInstall.sh")
     postInstall file("pkg_scripts/postInstall.sh")
-//  preUninstall file("pkg_scripts/preUninstall.sh")
+    preUninstall file("pkg_scripts/preUninstall.sh")
     postUninstall file("pkg_scripts/postUninstall.sh")
 
     into "/opt/local/spring-boot"

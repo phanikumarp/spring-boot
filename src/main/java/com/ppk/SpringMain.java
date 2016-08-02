@@ -41,7 +41,7 @@ public class SpringMain {
     	ArrayList<String> crunchifyList = new ArrayList<String>();
     	 
     	crunchifyList.add("Google");
-		crunchifyList.add("EBay");
+		crunchifyList.add("eBay");
 		crunchifyList.add("Paypal");
 		crunchifyList.add("Facebook");
 		crunchifyList.add("Yahoo");
