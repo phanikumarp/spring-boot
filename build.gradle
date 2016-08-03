@@ -111,6 +111,7 @@ buildDeb {
 user "spring-boot"
     permissionGroup "spring-boot"
     directory("/opt/local/spring-boot/log", 0755)
+    requires('openjdk-7-jre-headless')
     link("/etc/init.d/spring-boot", "/opt/local/spring-boot/bin/spring-boot.jar")
     link("/opt/local/spring-boot/bin/spring-boot.conf", "/opt/local/spring-boot/conf/spring-boot.conf")
 }
