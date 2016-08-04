@@ -44,7 +44,7 @@ public class SpringMain {
 		crunchifyList.add("Paypal");
 		crunchifyList.add("Facebook");
 		crunchifyList.add("Yahoo");
-		crunchifyList.add("Phani");
+		
  	return "This is List method to Phani: \n "+ crunchifyList;
     	
     }
