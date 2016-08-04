@@ -40,13 +40,13 @@ public class SpringMain {
     {
     	ArrayList<String> crunchifyList = new ArrayList<String>();
     	 
-    	crunchifyList.add("Google");
+    	        crunchifyList.add("Google");
 		crunchifyList.add("eBay");
 		crunchifyList.add("Paypal");
 		crunchifyList.add("Facebook");
 		crunchifyList.add("Yahoo");
  
-		return "This is List method : \n "+ crunchifyList;
+	return "This is List method to Phani: \n "+ crunchifyList;
     	
     }
     public static void main(String[] args) throws Exception {
