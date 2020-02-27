@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: bluegreen
+  namespace: '${ trigger[''user''] }'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bluegreen
+  template:
+    metadata:
+      labels:
+        app: bluegreen
+    spec:
+      containers:
+        - image: 'docker.io/opsmx11/restapp:simple-blue-1.0'
+          imagePullPolicy: Always 
+          name: restapp 
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 9090
+              name: prometheus
+              protocol: TCP
+
