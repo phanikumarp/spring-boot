@@ -1,8 +1,11 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'spring-boot'
-apply plugin: 'nebula.ospackage-base'
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'org.springframework.boot' version '2.5.12'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'nebula.ospackage-base'
+}
 
 buildscript {
     repositories {
@@ -10,7 +13,6 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE"
         classpath 'com.netflix.nebula:gradle-ospackage-plugin:3.1.0'
     }
 }
@@ -46,27 +48,21 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web"){
-        exclude module: "spring-boot-starter-tomcat"
-    }
-    compile 'org.apache.tomcat.embed:tomcat-embed-core:7.0.59'
-    compile 'org.apache.tomcat.embed:tomcat-embed-el:7.0.59'
-    compile 'org.apache.tomcat.embed:tomcat-embed-logging-juli:7.0.59'
-    compile 'org.apache.tomcat.embed:tomcat-embed-websocket:7.0.59'
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile 'com.google.api-client:google-api-client:1.22.0'
-    compile 'com.google.oauth-client:google-oauth-client:1.22.0'
-    compile 'com.google.http-client:google-http-client-jackson2:1.22.0'
-    compile 'com.google.oauth-client:google-oauth-client-jetty:1.22.0'
-    compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'com.google.apis:google-api-services-monitoring:v3-rev10-1.22.0'
-    compile 'com.google.apis:google-api-services-compute:v1-rev105-1.20.0'
-    compile 'joda-time:joda-time:2.9.4'
-    compile 'com.google.code.gson:gson:2.7'
-    compile group: 'postgresql', name: 'postgresql', version: '9.1-901-1.jdbc4'
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile('com.jayway.jsonpath:json-path')
-    compile 'javax.xml.bind:jaxb-api:2.3.0'
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.springframework.boot:spring-boot-starter-actuator')
+    implementation('com.google.api-client:google-api-client:1.22.0')
+    implementation('com.google.oauth-client:google-oauth-client:1.22.0')
+    implementation('com.google.http-client:google-http-client-jackson2:1.22.0')
+    implementation('com.google.oauth-client:google-oauth-client-jetty:1.22.0')
+    implementation('org.apache.commons:commons-lang3:3.4')
+    implementation('com.google.apis:google-api-services-monitoring:v3-rev10-1.22.0')
+    implementation('com.google.apis:google-api-services-compute:v1-rev105-1.20.0')
+    implementation('joda-time:joda-time:2.9.4')
+    implementation('com.google.code.gson:gson:2.7')
+    implementation group: 'postgresql', name: 'postgresql', version: '9.1-901-1.jdbc4'
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    testImplementation('com.jayway.jsonpath:json-path')
+    implementation('javax.xml.bind:jaxb-api:2.3.0')
 }
 
 task fatJar(type: Jar) {
@@ -76,7 +72,7 @@ task fatJar(type: Jar) {
         )
     }
     baseName = 'restapp' + '-all'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
 
@@ -85,7 +81,7 @@ wrapper {
    //distributionUrl = distributionUrl.replace("bin", "all")
 }
 
-task packDeb(type: Deb, dependsOn: bootRepackage) {
+task packDeb(type: Deb, dependsOn: bootJar) {
     packageName = 'restapp'
     version = 1.0
 
@@ -103,11 +99,11 @@ task packDeb(type: Deb, dependsOn: bootRepackage) {
         into 'bin'
         fileMode = 0550
     }
-    from(configurations.runtime) {
+    from(configurations.runtimeClasspath) {
         into 'lib'
     }
 }
-task packRpm(type: Rpm, dependsOn: bootRepackage) {
+task packRpm(type: Rpm, dependsOn: bootJar) {
     packageName = 'restapp'
     version = '1.0'
     release = '1'
@@ -128,7 +124,7 @@ task packRpm(type: Rpm, dependsOn: bootRepackage) {
         into 'bin'
         fileMode = 0550
     }
-    from(configurations.runtime) {
+    from(configurations.runtimeClasspath) {
         into 'lib'
     }
 
