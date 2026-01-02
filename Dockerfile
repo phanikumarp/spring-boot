@@ -14,5 +14,7 @@ COPY newrelic/* /opt/newrelic/
 #COPY tomcat.yaml /etc/dd-agent/conf.d/tomcat.yaml
 #COPY install-dd.sh install-dd.sh
 #RUN DD_API_KEY=<KEY> bash install-dd.sh
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+USER appuser
 CMD ["dockerrun.sh"]
 
