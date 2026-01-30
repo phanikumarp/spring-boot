@@ -17,6 +17,8 @@ spec:
         - image: 'docker.io/opsmx11/restapp:simple-blue-1.0'
           imagePullPolicy: Always 
           name: restapp 
+          securityContext:
+            allowPrivilegeEscalation: false
           ports:
             - containerPort: 8080
               name: http
